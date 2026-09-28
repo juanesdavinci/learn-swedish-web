@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f0">
+  <title>hej! | Swedish, a little every day</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f5f0;
+      --white: #fffefa;
+      --ink: #222a25;
+      --muted: #798078;
+      --line: #e4e6df;
+      --green: #d6e8b8;
+      --green-strong: #49663c;
+      --coral: #ed735d;
+      --yellow: #f1cf70;
+      --blue: #aecbd1;
+      --radius: 12px;
+      --shadow: 0 14px 34px rgba(40, 49, 38, .055);
+      font-family: "Aptos", "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--paper); color: var(--ink); }
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 224px minmax(0, 1fr); }
+    .sidebar { position: sticky; top: 0; display: flex; flex-direction: column; height: 100vh; padding: 27px 17px 18px; background: #f0f1eb; border-right: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 11px; color: var(--ink); text-decoration: none; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 11px 11px 11px 3px; color: white; background: var(--coral); font-size: 19px; font-weight: 800; }
+    .brand-name { font-size: 21px; font-weight: 800; letter-spacing: 0; }
+    .brand-name span { color: var(--coral); }
+    .side-label { margin: 37px 11px 10px; color: #92988e; font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-item { display: flex; width: 100%; align-items: center; gap: 12px; padding: 11px 12px; border: 0; border-radius: 8px; background: transparent; color: #687067; text-align: left; cursor: pointer; font-size: 13px; font-weight: 650; transition: background .18s, color .18s, transform .18s; }
+    .nav-item:hover { color: var(--ink); background: rgba(255,255,255,.7); }
+    .nav-item.active { color: var(--ink); background: var(--white); box-shadow: 0 2px 9px rgba(37, 45, 34, .06); }
+    .nav-icon { display: grid; width: 20px; place-items: center; color: #8a9187; font-size: 17px; }
+    .nav-item.active .nav-icon { color: var(--coral); }
+    .sidebar-bottom { margin-top: auto; }
+    .streak-card { position: relative; overflow: hidden; margin: 0 3px 16px; padding: 15px 14px; border: 1px solid #e4e8dc; border-radius: 10px; background: #e7eddb; }
+    .streak-card::after { position: absolute; right: -10px; bottom: -24px; width: 75px; height: 75px; border: 1px solid rgba(73,102,60,.13); border-radius: 50%; content: ""; box-shadow: 0 0 0 11px rgba(73,102,60,.035), 0 0 0 23px rgba(73,102,60,.03); }
+    .streak-kicker { color: #68795e; font-size: 10px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+    .streak-value { margin-top: 8px; font-family: Georgia, serif; font-size: 30px; line-height: 1; }
+    .streak-note { margin-top: 6px; color: #717a6c; font-size: 11px; }
+    .profile { display: flex; align-items: center; gap: 10px; padding: 12px 9px 0; border-top: 1px solid var(--line); }
+    .avatar { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: #d2e3e2; font-family: Georgia, serif; font-size: 16px; }
+    .profile-name { font-size: 12px; font-weight: 750; }
+    .profile-sub { margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .main { width: min(100%, 1420px); margin: 0 auto; padding: 28px clamp(22px, 4vw, 58px) 50px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 39px; margin-bottom: 31px; }
+    .breadcrumb { color: var(--muted); font-size: 12px; }
+    .breadcrumb strong { color: var(--ink); font-weight: 700; }
+    .top-actions { display: flex; align-items: center; gap: 9px; }
+    .date-label { color: var(--muted); font-size: 12px; }
+    .icon-button { display: inline-grid; width: 36px; height: 36px; place-items: center; border: 1px solid var(--line); border-radius: 9px; background: var(--white); cursor: pointer; transition: transform .18s, border-color .18s; }
+    .icon-button:hover { transform: translateY(-1px); border-color: #bbc2b6; }
+    .page-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 25px; animation: enter .4s both; }
+    .eyebrow { margin-bottom: 8px; color: var(--green-strong); font-size: 10px; font-weight: 800; letter-spacing: 1.15px; text-transform: uppercase; }
+    h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 3vw, 37px); font-weight: 500; letter-spacing: 0; line-height: 1.12; }
+    .heading-note { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .primary-button, .secondary-button { display: inline-flex; min-height: 39px; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 750; transition: transform .18s, background .18s; }
+    .primary-button { background: var(--ink); color: white; }
+    .primary-button:hover { transform: translateY(-1px); background: #38463b; }
+    .secondary-button { border-color: var(--line); background: var(--white); }
+    .secondary-button:hover { background: #f7f8f2; }
+    .button-symbol { font-size: 17px; line-height: 1; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(275px, .92fr); align-items: start; gap: 19px; }
+    .left-column, .right-column { display: grid; min-width: 0; gap: 18px; }
+    .panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 19px 13px; }
+    .panel-title { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 17px; font-weight: 500; letter-spacing: 0; }
+    .panel-subtitle { margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .text-button { padding: 5px 0; border: 0; background: transparent; color: #71816b; cursor: pointer; font-size: 11px; font-weight: 750; }
+    .text-button:hover { color: var(--coral); }
+    .today-panel { position: relative; overflow: hidden; padding: 20px 21px; background: #e7eddb; box-shadow: none; }
+    .today-panel::after { position: absolute; top: -55px; right: -42px; width: 180px; height: 180px; border: 1px solid rgba(73,102,60,.13); border-radius: 50%; content: ""; box-shadow: 0 0 0 18px rgba(73,102,60,.035), 0 0 0 39px rgba(73,102,60,.025); pointer-events: none; }
+    .today-top { position: relative; z-index: 1; display: flex; align-items: start; justify-content: space-between; gap: 15px; }
+    .today-overline { color: #68795e; font-size: 10px; font-weight: 800; letter-spacing: .9px; text-transform: uppercase; }
+    .today-panel h2 { margin: 7px 0 0; font-family: Georgia, serif; font-size: 23px; font-weight: 500; }
+    .goal-chip { flex: none; padding: 7px 9px; border: 1px solid rgba(73,102,60,.17); border-radius: 20px; background: rgba(255,255,255,.42); color: #617458; font-size: 10px; font-weight: 750; }
+    .today-bottom { position: relative; z-index: 1; display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-top: 25px; }
+    .minutes { display: flex; align-items: baseline; gap: 5px; }
+    .minutes strong { font-family: Georgia, serif; font-size: 37px; font-weight: 500; line-height: 1; }
+    .minutes span { color: #71816b; font-size: 11px; }
+    .goal-copy { margin-top: 5px; color: #71816b; font-size: 11px; }
+    .progress-track { overflow: hidden; height: 5px; margin-top: 12px; border-radius: 5px; background: rgba(73,102,60,.13); }
+    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: #6a8a53; transition: width .35s; }
+    .today-action { position: relative; z-index: 1; flex: none; min-height: 36px; padding: 0 12px; border: 1px solid rgba(73,102,60,.22); border-radius: 7px; background: rgba(255,255,255,.7); color: #415a38; cursor: pointer; font-size: 11px; font-weight: 750; }
+    .today-action:hover { background: white; }
+    .week-panel { padding-bottom: 15px; }
+    .week-stats { display: flex; align-items: baseline; gap: 7px; color: var(--muted); font-size: 11px; }
+    .week-stats strong { color: var(--ink); font-family: Georgia, serif; font-size: 19px; font-weight: 500; }
+    .week-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding: 5px 20px 0; }
+    .week-day { display: grid; justify-items: center; gap: 8px; color: #8a9187; font-size: 9px; }
+    .bar-wrap { display: flex; width: 100%; height: 69px; align-items: end; justify-content: center; }
+    .week-bar { width: min(27px, 68%); min-height: 4px; border-radius: 5px 5px 2px 2px; background: #d8e5c8; transition: height .3s; }
+    .week-bar.has-activity { background: #a8c28e; }
+    .week-bar.today { background: var(--coral); }
+    .week-day.today-label { color: var(--ink); font-weight: 800; }
+    .word-list { display: grid; padding: 0 18px 9px; }
+    .word-row { display: flex; align-items: center; gap: 11px; min-width: 0; padding: 11px 1px; border-top: 1px solid #eff0eb; }
+    .word-badge { display: grid; width: 34px; height: 34px; flex: none; place-items: center; border-radius: 9px; background: #eff1e8; color: #596e4d; font-family: Georgia, serif; font-size: 15px; }
+    .word-info { min-width: 0; flex: 1; }
+    .word-swedish { overflow: hidden; font-family: Georgia, serif; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+    .word-translation { overflow: hidden; margin-top: 3px; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .word-pronunciation { margin-top: 4px; color: #9b776b; font-size: 10px; font-style: italic; }
+    .speak-button { display: grid; width: 30px; height: 30px; flex: none; place-items: center; border: 0; border-radius: 7px; background: transparent; color: #829078; cursor: pointer; font-size: 16px; }
+    .speak-button:hover { background: #f0f2ea; color: var(--green-strong); }
+    .empty-note { padding: 22px 4px; color: var(--muted); font-size: 12px; text-align: center; }
+    .calendar-panel { padding-bottom: 14px; }
+    .month-nav { display: flex; align-items: center; gap: 8px; }
+    .month-name { min-width: 87px; color: #61695f; font-size: 11px; font-weight: 750; text-align: center; }
+    .tiny-arrow { display: grid; width: 27px; height: 27px; place-items: center; border: 1px solid var(--line); border-radius: 7px; background: white; cursor: pointer; }
+    .tiny-arrow:hover { background: #f5f5f0; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px 3px; padding: 8px 17px 0; }
+    .calendar-weekday { padding-bottom: 4px; color: #9a9f96; font-size: 9px; text-align: center; }
+    .calendar-day { position: relative; display: grid; aspect-ratio: 1; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #667064; cursor: pointer; font-size: 10px; }
+    .calendar-day:hover { background: #f0f2ea; }
+    .calendar-day.outside { color: #c4c8c0; }
+    .calendar-day.has-activity { background: #e3edd7; color: #48633a; font-weight: 750; }
+    .calendar-day.today { outline: 1px solid var(--coral); outline-offset: -1px; }
+    .calendar-day.selected { background: var(--ink); color: white; }
+    .calendar-legend { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 14px 18px 0; color: var(--muted); font-size: 9px; }
+    .legend-items { display: flex; align-items: center; gap: 8px; }
+    .legend-swatch { width: 8px; height: 8px; border-radius: 2px; background: #e3edd7; }
+    .day-detail { margin: 12px 18px 0; padding-top: 11px; border-top: 1px solid #eff0eb; color: var(--muted); font-size: 10px; }
+    .day-detail strong { color: var(--ink); }
+    .quick-card { display: flex; align-items: center; gap: 13px; padding: 16px; border-color: #eadccf; background: #f4e9de; box-shadow: none; }
+    .quick-card-icon { display: grid; width: 39px; height: 39px; flex: none; place-items: center; border-radius: 11px; background: #f9f2e9; color: #b47750; font-size: 18px; }
+    .quick-copy { min-width: 0; flex: 1; }
+    .quick-title { font-family: Georgia, serif; font-size: 15px; }
+    .quick-note { margin-top: 4px; color: #83766a; font-size: 10px; }
+    .quick-arrow { flex: none; width: 31px; height: 31px; border: 0; border-radius: 50%; background: rgba(255,255,255,.7); cursor: pointer; font-size: 16px; }
+    .quick-arrow:hover { background: white; }
+    .content-panel { overflow: hidden; }
+    .toolbar { display: flex; align-items: center; gap: 9px; padding: 0 19px 15px; }
+    .search-box { display: flex; min-width: 180px; flex: 1; align-items: center; gap: 7px; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: #92988e; }
+    .search-box input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 11px; }
+    .count-label { color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .full-word-list { padding: 0 19px 12px; }
+    .full-word-row { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(90px, 1fr) minmax(85px, .8fr) 32px 32px; align-items: center; gap: 8px; padding: 12px 0; border-top: 1px solid #eff0eb; }
+    .full-word-row .word-swedish { font-size: 15px; }
+    .word-example { overflow: hidden; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .delete-button { display: grid; width: 29px; height: 29px; place-items: center; border: 0; border-radius: 6px; background: transparent; color: #92988e; cursor: pointer; }
+    .delete-button:hover { background: #fff0ed; color: #bd4d3b; }
+    .cards-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 0 19px 19px; }
+    .phrase-tile { min-height: 150px; padding: 15px; border: 1px solid #ebece5; border-radius: 9px; background: #fafaf6; }
+    .phrase-top { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
+    .phrase-swedish { font-family: Georgia, serif; font-size: 18px; line-height: 1.25; }
+    .phrase-translation { margin-top: 8px; color: var(--muted); font-size: 11px; }
+    .phrase-pronunciation { margin-top: 6px; color: #9b776b; font-size: 10px; font-style: italic; }
+    .phrase-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; padding-top: 10px; border-top: 1px solid #eceee8; }
+    .phrase-example { overflow: hidden; color: #8b9187; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .small-actions { display: flex; flex: none; gap: 5px; }
+    .review-area { display: grid; justify-items: center; padding: 10px 20px 24px; }
+    .review-count { margin-bottom: 11px; color: var(--muted); font-size: 10px; }
+    .flashcard { display: grid; width: min(100%, 510px); min-height: 250px; align-content: center; justify-items: center; padding: 28px; border: 1px solid #dfe5d5; border-radius: 11px; background: #e7eddb; text-align: center; }
+    .flashcard.revealed { background: #f3e6dc; border-color: #ecdbca; }
+    .flashcard-kicker { color: #78866c; font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    .flashcard-word { margin-top: 14px; font-family: Georgia, serif; font-size: clamp(25px, 5vw, 37px); }
+    .flashcard-translation { margin-top: 11px; color: #70796d; font-size: 15px; }
+    .flashcard-pronunciation { margin-top: 8px; color: #9b776b; font-size: 12px; font-style: italic; }
+    .review-controls { display: flex; width: min(100%, 510px); justify-content: space-between; gap: 9px; margin-top: 12px; }
+    .review-controls .secondary-button, .review-controls .primary-button { flex: 1; }
+    .review-footer { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+    .review-footer button { min-width: 110px; }
+    .exercise-nav { display: flex; flex-wrap: wrap; gap: 7px; margin: -7px 0 18px; }
+    .exercise-link { min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 7px; background: var(--white); color: #687067; cursor: pointer; font-size: 11px; font-weight: 700; }
+    .exercise-link:hover, .exercise-link.active { border-color: #c9d5bc; background: #e7eddb; color: #415a38; }
+    .lesson-list, .resource-list { display: grid; gap: 10px; padding: 0 19px 19px; }
+    .lesson-card { padding: 15px; border: 1px solid #ebece5; border-radius: 8px; background: #fafaf6; }
+    .lesson-kicker { color: #78866c; font-size: 9px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+    .lesson-title { margin-top: 6px; font-family: Georgia, serif; font-size: 17px; }
+    .lesson-copy { margin-top: 6px; color: #747c72; font-size: 11px; line-height: 1.55; }
+    .lesson-example { margin-top: 10px; padding: 10px 11px; border-left: 3px solid var(--yellow); background: #f5f1e5; font-size: 12px; line-height: 1.5; }
+    .lesson-example strong { font-family: Georgia, serif; font-size: 14px; font-weight: 500; }
+    .lesson-quiz { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 11px; }
+    .lesson-quiz select { min-height: 34px; flex: 1; padding: 0 9px; border: 1px solid var(--line); border-radius: 7px; background: white; color: var(--ink); font-size: 11px; }
+    .listening-box { padding: 0 19px 19px; }
+    .listening-prompt { padding: 17px; border-radius: 8px; background: #e5eff0; text-align: center; }
+    .listening-prompt p { margin: 0 0 11px; color: #647a7d; font-size: 11px; }
+    .listening-options { display: grid; gap: 8px; margin-top: 13px; }
+    .listening-option { min-height: 42px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 7px; background: white; text-align: left; cursor: pointer; font-size: 11px; }
+    .listening-option:hover:not(:disabled) { border-color: #a8c6ca; background: #f5faf9; }
+    .listening-option:disabled { cursor: default; }
+    .listening-option.correct { border-color: #a9c491; background: #eef5e7; }
+    .listening-option.incorrect { border-color: #e3b4a8; background: #fff1ed; }
+    .media-meta { color: #9b776b; font-size: 9px; font-weight: 750; text-transform: uppercase; }
+    .resource-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 19px 19px; }
+    .resource-link { display: block; padding: 11px 12px; border: 1px solid #ebece5; border-radius: 7px; color: var(--ink); text-decoration: none; }
+    .resource-link:hover { border-color: #c9d5bc; background: #fafaf6; }
+    .resource-link strong { display: block; font-size: 11px; }
+    .resource-link span { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; line-height: 1.4; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 17px; }
+    .stats-grid + div { grid-template-columns: minmax(0, 1fr) minmax(210px, .62fr) !important; gap: 15px; align-items: start; }
+    .stat-card { padding: 17px; border: 1px solid var(--line); border-radius: 10px; background: var(--white); box-shadow: var(--shadow); }
+    .stat-label { color: var(--muted); font-size: 10px; }
+    .stat-value { margin-top: 10px; font-family: Georgia, serif; font-size: 27px; }
+    .stat-foot { margin-top: 5px; color: #8c9389; font-size: 10px; }
+    .wide-calendar { padding-bottom: 20px; }
+    .wide-calendar .calendar-grid { gap: 7px; padding: 12px 21px 0; }
+    .wide-calendar .calendar-day { max-width: 52px; justify-self: center; width: 100%; font-size: 12px; }
+    .wide-calendar .calendar-weekday { font-size: 10px; }
+    .month-summary { display: flex; align-items: center; gap: 9px; margin: 17px 21px 0; padding-top: 14px; border-top: 1px solid #eff0eb; color: var(--muted); font-size: 11px; }
+    .month-summary strong { color: var(--ink); }
+    .overlay { position: fixed; z-index: 10; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(30, 38, 31, .3); animation: fade .15s both; }
+    .dialog { width: min(100%, 440px); padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); box-shadow: 0 25px 70px rgba(20, 28, 20, .2); animation: enter .2s both; }
+    .dialog-header { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 19px; }
+    .dialog-title { margin: 0; font-family: Georgia, serif; font-size: 22px; font-weight: 500; }
+    .dialog-sub { margin-top: 5px; color: var(--muted); font-size: 11px; }
+    .field { display: grid; gap: 6px; margin-bottom: 13px; }
+    .field label { color: #667064; font-size: 10px; font-weight: 750; }
+    .field input, .field textarea, .field select { width: 100%; min-height: 38px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px; outline: 0; background: #fff; color: var(--ink); font-size: 12px; }
+    .field textarea { min-height: 65px; resize: vertical; }
+    .field input:focus, .field textarea:focus { border-color: #94aa7c; box-shadow: 0 0 0 3px rgba(148,170,124,.13); }
+    .field-hint { color: #939990; font-size: 9px; }
+    .dialog-actions { display: flex; justify-content: end; gap: 8px; margin-top: 18px; }
+    .toast { position: fixed; z-index: 20; right: 20px; bottom: 20px; max-width: calc(100vw - 40px); padding: 12px 15px; border: 1px solid #465449; border-radius: 8px; background: var(--ink); color: #fff; box-shadow: var(--shadow); font-size: 11px; animation: enter .18s both; }
+    .mobile-nav { display: none; }
+    [hidden] { display: none !important; }
+    @keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width: 940px) {
+      .app { grid-template-columns: 68px minmax(0, 1fr); }
+      .sidebar { align-items: center; padding-right: 8px; padding-left: 8px; }
+      .brand { padding: 0; }
+      .brand-name, .side-label, .nav-text, .streak-card, .profile-copy { display: none; }
+      .nav-list { width: 100%; margin-top: 32px; }
+      .nav-item { justify-content: center; padding: 11px 4px; }
+      .nav-icon { width: 25px; font-size: 18px; }
+      .profile { justify-content: center; width: 100%; padding: 12px 0 0; }
+      .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
+      .right-column { grid-template-columns: minmax(0, 1fr) minmax(240px, .8fr); align-items: start; }
+    }
+    @media (max-width: 620px) {
+      .app { display: block; padding-bottom: 63px; }
+      .sidebar { display: none; }
+      .main { padding: 18px 15px 32px; }
+      .topbar { margin-bottom: 22px; }
+      .date-label { font-size: 10px; }
+      .page-heading { align-items: start; margin-bottom: 19px; }
+      .page-heading .primary-button { min-height: 35px; padding: 0 10px; font-size: 10px; }
+      .heading-note { max-width: 270px; font-size: 11px; }
+      .dashboard-grid { gap: 13px; }
+      .left-column, .right-column { gap: 13px; }
+      .right-column { grid-template-columns: 1fr; }
+      .week-chart { gap: 5px; }
+      .bar-wrap { height: 57px; }
+      .calendar-grid { gap: 4px 2px; padding-right: 12px; padding-left: 12px; }
+      .calendar-day { font-size: 9px; }
+      .cards-grid { grid-template-columns: 1fr; padding-right: 13px; padding-left: 13px; }
+      .panel-header { padding-right: 14px; padding-left: 14px; }
+      .toolbar { padding-right: 13px; padding-left: 13px; }
+      .full-word-list { padding-right: 13px; padding-left: 13px; }
+      .full-word-row { grid-template-columns: minmax(75px, 1fr) minmax(75px, 1fr) 29px 29px; gap: 4px; }
+      .full-word-row .word-example { display: none; }
+      .stats-grid { gap: 7px; }
+      .stat-card { padding: 12px 10px; }
+      .stat-label, .stat-foot { font-size: 9px; }
+      .stat-value { font-size: 23px; }
+      .wide-calendar .calendar-grid { padding-right: 13px; padding-left: 13px; }
+      .wide-calendar .calendar-day { font-size: 10px; }
+      .stats-grid + div { grid-template-columns: 1fr !important; }
+      .mobile-nav { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(4, 1fr); height: 61px; padding: 5px 7px max(5px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(255,254,250,.96); backdrop-filter: blur(12px); }
+      .mobile-nav .nav-item { display: grid; align-content: center; justify-items: center; gap: 1px; padding: 3px; font-size: 9px; }
+      .mobile-nav .nav-icon { height: 21px; font-size: 16px; }
+      .resource-grid { grid-template-columns: 1fr; padding-right: 13px; padding-left: 13px; }
+      .lesson-list { padding-right: 13px; padding-left: 13px; }
+      .listening-box { padding-right: 13px; padding-left: 13px; }
+      .exercise-nav { margin-top: -4px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#overview" aria-label="hej home"><span class="brand-mark">h</span><span class="brand-name">hej<span>!</span></span></a>
+      <div class="side-label">Your study space</div>
+      <nav class="nav-list" id="side-nav">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-text">Overview</span></button>
+        <button class="nav-item" data-view="words"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-text">Vocabulary</span></button>
+        <button class="nav-item" data-view="cards"><span class="nav-icon" aria-hidden="true">▱</span><span class="nav-text">Everyday phrases</span></button>
+        <button class="nav-item" data-view="listening"><span class="nav-icon" aria-hidden="true">◖))</span><span class="nav-text">Listening</span></button>
+        <button class="nav-item" data-view="theory"><span class="nav-icon" aria-hidden="true">§</span><span class="nav-text">Theory</span></button>
+        <button class="nav-item" data-view="media"><span class="nav-icon" aria-hidden="true">♫</span><span class="nav-text">Media phrases</span></button>
+        <button class="nav-item" data-view="progress"><span class="nav-icon" aria-hidden="true">▦</span><span class="nav-text">Progress</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="streak-card"><div class="streak-kicker">Current study streak</div><div class="streak-value" id="streak-value">0 days</div><div class="streak-note" id="streak-note">A little Swedish adds up.</div></div>
+        <div class="profile"><div class="avatar" aria-hidden="true">J</div><div class="profile-copy"><div class="profile-name">My Swedish</div><div class="profile-sub">A1 · finding my words</div></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div class="breadcrumb"><strong>My Swedish</strong> <span aria-hidden="true">/</span> <span id="crumb-current">Overview</span></div><div class="top-actions"><span class="date-label" id="today-date"></span><span class="date-label" id="storage-status">Browser storage</span><button class="icon-button" id="export-data" type="button" title="Export backup" aria-label="Export backup">↓</button><button class="icon-button" id="import-data" type="button" title="Import backup" aria-label="Import backup">↑</button><button class="icon-button" id="add-from-top" type="button" title="Add a word" aria-label="Add a word">＋</button><input id="data-import" type="file" accept="application/json,.json" hidden></div></header>
+      <div id="view-root"></div>
+    </main>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Main navigation">
+      <button class="nav-item active" data-view="overview"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></button>
+      <button class="nav-item" data-view="cards"><span class="nav-icon" aria-hidden="true">▱</span><span>Phrases</span></button>
+      <button class="nav-item" data-view="media"><span class="nav-icon" aria-hidden="true">♫</span><span>Media</span></button>
+      <button class="nav-item" data-view="progress"><span class="nav-icon" aria-hidden="true">▦</span><span>Progress</span></button>
+    </nav>
+  </div>
+  <div id="modal-root"></div>
+  <div id="toast-root" aria-live="polite"></div>
+  <script>
+    (() => {
+      const STORAGE_KEY = "hej-swedish-learning-v1";
+      const today = new Date();
+      const dateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const seed = {
+        goal: 20,
+        words: [
+          { id: "w1", sv: "fika", en: "coffee break", pronunciation: "fee-ka", example: "Ska vi ta en fika?" },
+          { id: "w2", sv: "lagom", en: "just the right amount", pronunciation: "lah-gom", example: "Det är lagom varmt." },
+          { id: "w3", sv: "fönster", en: "window", pronunciation: "furn-ster", example: "Öppna fönstret, tack." },
+          { id: "w4", sv: "tack så mycket", en: "thank you very much", pronunciation: "tack soh mick-et", example: "Tack så mycket för hjälpen." },
+          { id: "w5", sv: "mysig", en: "cozy", pronunciation: "mee-sig", example: "Vilket mysigt café." },
+          { id: "w6", sv: "förstår", en: "understand", pronunciation: "fur-stor", example: "Jag förstår lite svenska." },
+          { id: "w7", sv: "kanske", en: "maybe", pronunciation: "kan-sheh", example: "Kanske ses vi i morgon." },
+          { id: "w8", sv: "behöver", en: "need", pronunciation: "beh-hur-ver", example: "Jag behöver lite hjälp." },
+          { id: "w9", sv: "alltid", en: "always", pronunciation: "al-tid", example: "Hon kommer alltid i tid." },
+          { id: "w10", sv: "tillsammans", en: "together", pronunciation: "til-sam-mans", example: "Vi lär oss tillsammans." },
+          { id: "w11", sv: "börjar", en: "starts / am starting", pronunciation: "bur-yar", example: "Filmen börjar klockan sju." }
+        ],
+        phrases: [
+          { id: "p1", sv: "Hej, hur mår du?", en: "Hi, how are you?", pronunciation: "hey, hoor more doo", example: "A friendly way to start a conversation." },
+          { id: "p2", sv: "Jag skulle vilja ha en kaffe.", en: "I would like a coffee.", pronunciation: "yahg skool-eh vil-yah hah en kaff-eh", example: "Useful at a café." },
+          { id: "p3", sv: "Var ligger stationen?", en: "Where is the station?", pronunciation: "vahr lig-er stah-shoon-en", example: "Ask for directions." },
+          { id: "p4", sv: "Kan du hjälpa mig?", en: "Can you help me?", pronunciation: "kahn doo yel-pah may", example: "A useful phrase for everyday situations." },
+          { id: "p5", sv: "Det låter bra!", en: "That sounds good!", pronunciation: "deht law-ter brah", example: "Say yes to a good plan." },
+          { id: "p6", sv: "Ursäkta, kan jag få notan?", en: "Excuse me, could I have the bill?", pronunciation: "oor-shek-ta, kan yahg foh noo-tan", example: "At a café or restaurant." },
+          { id: "p7", sv: "Jag håller med.", en: "I agree.", pronunciation: "yahg hol-ler med", example: "Join in when you share an opinion." },
+          { id: "p8", sv: "Vi ses senare!", en: "See you later!", pronunciation: "vee says seh-nah-reh", example: "A relaxed goodbye." },
+          { id: "p9", sv: "Kan du prata lite långsammare?", en: "Could you speak a little more slowly?", pronunciation: "kan doo prah-ta lee-teh long-sam-mah-reh", example: "A useful phrase for learners." }
+        ],
+        mediaPhrases: [
+          { id: "m1", sv: "Den här låten fastnar direkt.", en: "This song gets stuck in your head right away.", source: "Music conversation · original practice line", note: "fastna = to get stuck; fastnar is the present tense." },
+          { id: "m2", sv: "Har du sett det senaste avsnittet?", en: "Have you seen the latest episode?", source: "TV chat · original practice line", note: "avsnitt means episode or section." },
+          { id: "m3", sv: "Skriv gärna vad du tycker.", en: "Feel free to write what you think.", source: "Online comments · original practice line", note: "gärna softens a suggestion: gladly / feel free to." }
+        ],
+        listening: [
+          { id: "l1", sv: "Kan du säga det igen?", en: "Can you say that again?", options: ["Can you say that again?", "Where are you going?", "I would like some water."], pronunciation: "kan doo seh-ya deht ee-yen" },
+          { id: "l2", sv: "Vi ses efter jobbet.", en: "See you after work.", options: ["The bus is late today.", "See you after work.", "I work at the station."], pronunciation: "vee says ef-ter yob-bet" },
+          { id: "l3", sv: "Jag tar gärna en kopp te.", en: "I'd gladly have a cup of tea.", options: ["I'd gladly have a cup of tea.", "I don't drink coffee.", "The tea is very hot."], pronunciation: "yahg tar yair-na en kopp teh" }
+        ],
+        theory: [
+          { id: "t1", title: "Present tense stays simple", topic: "VERBS", copy: "Most Swedish verbs use the same present-tense form for every person. The verb does not change for jag, du, or vi.", example: "jag pratar · du pratar · vi pratar", question: "Choose the correct form: De ___ svenska.", options: ["pratar", "pratade", "prata"], answer: "pratar" },
+          { id: "t2", title: "The noun carries 'the'", topic: "NOUNS", copy: "Swedish often adds the definite article to the end of a noun. En-words commonly take -en; ett-words commonly take -et.", example: "en bok → boken · ett hus → huset", question: "What is 'the car' if bil is an en-word?", options: ["en bil", "bilen", "bil ett"], answer: "bilen" },
+          { id: "t3", title: "Main-clause verb-second", topic: "WORD ORDER", copy: "In a normal main clause, the finite verb usually comes second. If a time phrase starts the sentence, the subject follows the verb.", example: "Jag kommer imorgon. · Imorgon kommer jag.", question: "Complete: Idag ___ vi hemma.", options: ["är", "vi är", "hemma"], answer: "är" }
+        ],
+        logs: {}
+      };
+      let data;
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        data = saved && Array.isArray(saved.words) && Array.isArray(saved.phrases) ? { ...seed, ...saved, logs: saved.logs || {} } : structuredClone(seed);
+      } catch { data = structuredClone(seed); }
+      let currentView = "overview";
+      let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      let selectedDay = dateKey(today);
+      let reviewIndex = 0;
+      let reviewRevealed = false;
+      let listeningIndex = 0;
+      let listeningAnswer = null;
+      let sessionStartedAt = null;
+      let toastTimer;
+      let serverAvailable = false;
+      let persistenceQueue = Promise.resolve();
+
+      const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+      const persist = () => {
+        const snapshot = JSON.stringify(data);
+        try { localStorage.setItem(STORAGE_KEY, snapshot); } catch { showToast("Browser storage is unavailable; changes may not survive a reload."); }
+        if (!serverAvailable) return Promise.resolve();
+        persistenceQueue = persistenceQueue.then(async () => {
+          const response = await fetch("/api/state", { method: "PUT", headers: { "Content-Type": "application/json" }, body: snapshot });
+          if (!response.ok) throw new Error("Database save failed.");
+        }).catch(() => {
+          serverAvailable = false;
+          document.getElementById("storage-status").textContent = "Browser storage";
+          showToast("Database disconnected. Changes are saved in this browser for now.");
+        });
+        return persistenceQueue;
+      };
+      const logFor = (key = dateKey(today)) => data.logs[key] || { minutes: 0, wordsAdded: 0, cardsAdded: 0, reviews: 0, learned: 0 };
+      const updateLog = (changes, key = dateKey(today)) => {
+        const log = logFor(key);
+        data.logs[key] = { ...log, ...Object.fromEntries(Object.entries(changes).map(([name, amount]) => [name, (log[name] || 0) + amount])) };
+        persist();
+      };
+      const dayHasActivity = (key) => {
+        const log = data.logs[key];
+        return !!log && Object.values(log).some((value) => Number(value) > 0);
+      };
+      const getStreak = () => {
+        let cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        if (!dayHasActivity(dateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+        let count = 0;
+        while (dayHasActivity(dateKey(cursor))) { count += 1; cursor.setDate(cursor.getDate() - 1); }
+        return count;
+      };
+      const speak = (text) => {
+        if (!("speechSynthesis" in window)) { showToast("Speech playback is not available in this browser."); return; }
+        const voice = window.speechSynthesis.getVoices().find((item) => item.lang.toLocaleLowerCase().startsWith("sv"));
+        if (!voice) { showToast("No Swedish voice is installed. Add one in your device's speech settings."); return; }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+        utterance.rate = 0.86;
+        window.speechSynthesis.speak(utterance);
+      };
+      const showToast = (message) => {
+        const root = document.getElementById("toast-root");
+        root.innerHTML = `<div class="toast" role="status">${escapeHtml(message)}</div>`;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { root.innerHTML = ""; }, 2700);
+      };
+      const formatHeadingDate = (date) => new Intl.DateTimeFormat("en", { weekday: "long", month: "long", day: "numeric" }).format(date);
+      const renderHeading = (eyebrow, title, note, button = "") => `<div class="page-heading"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p class="heading-note">${note}</p></div>${button}</div>`;
+      const addButton = (label, kind = "word") => `<button class="primary-button" type="button" data-add="${kind}"><span class="button-symbol" aria-hidden="true">＋</span>${label}</button>`;
+
+      const renderWeek = () => {
+        const mondayOffset = (today.getDay() + 6) % 7;
+        const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - mondayOffset);
+        const labels = ["M", "T", "W", "T", "F", "S", "S"];
+        const minutes = [];
+        const days = labels.map((label, index) => {
+          const day = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + index);
+          const value = logFor(dateKey(day)).minutes || 0;
+          minutes.push(value);
+          return { label, day, value };
+        });
+        const max = Math.max(...minutes, 8);
+        const total = minutes.reduce((sum, value) => sum + value, 0);
+        return `<section class="panel week-panel"><div class="panel-header"><div><h2 class="panel-title">This week</h2><div class="panel-subtitle">Your steady little steps</div></div><div class="week-stats"><strong>${total}</strong> min</div></div><div class="week-chart">${days.map(({ label, day, value }) => `<div class="week-day ${dateKey(day) === dateKey(today) ? "today-label" : ""}"><div class="bar-wrap"><div class="week-bar ${value ? "has-activity" : ""} ${dateKey(day) === dateKey(today) ? "today" : ""}" style="height:${Math.max(6, Math.round(value / max * 64))}px" title="${value} minutes"></div></div><span>${label}</span></div>`).join("")}</div></section>`;
+      };
+      const calendarMarkup = (large = false) => {
+        const year = calendarMonth.getFullYear();
+        const month = calendarMonth.getMonth();
+        const first = new Date(year, month, 1);
+        const start = new Date(year, month, 1 - ((first.getDay() + 6) % 7));
+        const monthName = new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(calendarMonth);
+        const cells = Array.from({ length: 42 }, (_, index) => {
+          const day = new Date(start.getFullYear(), start.getMonth(), start.getDate() + index);
+          const key = dateKey(day);
+          const classes = ["calendar-day", day.getMonth() !== month ? "outside" : "", dayHasActivity(key) ? "has-activity" : "", key === dateKey(today) ? "today" : "", key === selectedDay && !large ? "selected" : ""].filter(Boolean).join(" ");
+          return `<button class="${classes}" type="button" data-day="${key}" aria-label="${escapeHtml(formatHeadingDate(day))}${dayHasActivity(key) ? ", study activity" : ""}" title="${dayHasActivity(key) ? `${logFor(key).minutes || 0} minutes studied` : "No activity logged"}">${day.getDate()}</button>`;
+        }).join("");
+        return `<section class="panel calendar-panel ${large ? "wide-calendar" : ""}"><div class="panel-header"><div><h2 class="panel-title">Study calendar</h2><div class="panel-subtitle">Every day you show up counts.</div></div><div class="month-nav"><button class="tiny-arrow" type="button" data-month="-1" aria-label="Previous month">‹</button><span class="month-name">${monthName}</span><button class="tiny-arrow" type="button" data-month="1" aria-label="Next month">›</button></div></div><div class="calendar-grid"><div class="calendar-weekday">M</div><div class="calendar-weekday">T</div><div class="calendar-weekday">W</div><div class="calendar-weekday">T</div><div class="calendar-weekday">F</div><div class="calendar-weekday">S</div><div class="calendar-weekday">S</div>${cells}</div><div class="calendar-legend"><span>One day at a time</span><span class="legend-items"><i class="legend-swatch"></i> Studied</span></div>${!large ? `<div class="day-detail"><strong>${selectedDay === dateKey(today) ? "Today" : escapeHtml(new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${selectedDay}T12:00:00`)))}</strong> · ${dayHasActivity(selectedDay) ? `${logFor(selectedDay).minutes || 0} min · ${(logFor(selectedDay).wordsAdded || 0) + (logFor(selectedDay).cardsAdded || 0)} added · ${logFor(selectedDay).reviews || 0} reviews` : "No study logged"}</div>` : `<div class="month-summary"><span class="legend-swatch"></span><span><strong>${Object.keys(data.logs).filter((key) => key.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`) && dayHasActivity(key)).length}</strong> study days this month</span></div>`}</section>`;
+      };
+      const renderDashboard = () => {
+        const log = logFor();
+        const progress = Math.min(100, Math.round((log.minutes / data.goal) * 100));
+        const recentWords = [...data.words].slice(-4).reverse();
+        const wordRows = recentWords.length ? recentWords.map((word, index) => `<div class="word-row"><div class="word-badge">${String(index + 1).padStart(2, "0")}</div><div class="word-info"><div class="word-swedish">${escapeHtml(word.sv)}</div><div class="word-translation">${escapeHtml(word.en)}</div>${word.pronunciation ? `<div class="word-pronunciation">${escapeHtml(word.pronunciation)}</div>` : ""}</div><button class="speak-button" type="button" data-speak="${escapeHtml(word.sv)}" title="Listen to ${escapeHtml(word.sv)}" aria-label="Listen to ${escapeHtml(word.sv)}">◖))</button></div>`).join("") : `<div class="empty-note">Add your first word to begin.</div>`;
+        const phrase = data.phrases[0];
+        return `${renderHeading("Måndag, måndag...", "Hej, ready for a little Swedish?", "A few minutes today makes tomorrow feel more familiar.", addButton("Add a word"))}<div class="dashboard-grid"><div class="left-column"><section class="panel today-panel"><div class="today-top"><div><div class="today-overline">Your daily practice</div><h2>Small steps, big fluency.</h2></div><span class="goal-chip">${data.goal} min daily goal</span></div><div class="today-bottom"><div style="flex:1;max-width:270px"><div class="minutes"><strong>${log.minutes || 0}</strong><span>of ${data.goal} min</span></div><div class="goal-copy">${progress >= 100 ? "Daily goal reached. Snyggt!" : `${Math.max(0, data.goal - log.minutes)} minutes to your daily goal`}</div><div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div></div><button class="today-action" type="button" data-session>${sessionStartedAt ? "Finish session" : "Start a study session"}</button></div></section>${renderWeek()}<section class="panel"><div class="panel-header"><div><h2 class="panel-title">Recently in your word bank</h2><div class="panel-subtitle">Words worth keeping close</div></div><button class="text-button" type="button" data-go="words">All words →</button></div><div class="word-list">${wordRows}</div></section></div><div class="right-column">${calendarMarkup()}<section class="panel"><div class="panel-header"><div><h2 class="panel-title">A phrase for today</h2><div class="panel-subtitle">One small thing to say out loud</div></div><button class="text-button" type="button" data-go="cards">Practice →</button></div>${phrase ? `<div style="padding:1px 19px 19px"><div class="phrase-swedish">${escapeHtml(phrase.sv)}</div><div class="phrase-translation">${escapeHtml(phrase.en)}</div><div class="phrase-pronunciation">${escapeHtml(phrase.pronunciation || "")}</div><div style="display:flex;justify-content:end;margin-top:11px"><button class="secondary-button" type="button" data-speak="${escapeHtml(phrase.sv)}"><span aria-hidden="true">◖))</span> Listen</button></div></div>` : `<div class="empty-note">Add a phrase to your cards.</div>`}</section><section class="panel quick-card"><div class="quick-card-icon" aria-hidden="true">✳</div><div class="quick-copy"><div class="quick-title">Build your phrase deck</div><div class="quick-note">Save something you want to say.</div></div><button class="quick-arrow" type="button" data-add="phrase" aria-label="Add a phrase">＋</button></section></div></div>`;
+      };
+      const renderWords = () => {
+        const rows = data.words.length ? data.words.map((word) => `<div class="full-word-row"><div class="word-info"><div class="word-swedish">${escapeHtml(word.sv)}</div>${word.pronunciation ? `<div class="word-pronunciation">${escapeHtml(word.pronunciation)}</div>` : ""}</div><div class="word-translation">${escapeHtml(word.en)}</div><div class="word-example">${escapeHtml(word.example || "")}</div><button class="speak-button" type="button" data-speak="${escapeHtml(word.sv)}" title="Listen" aria-label="Listen to ${escapeHtml(word.sv)}">◖))</button><button class="delete-button" type="button" data-delete-word="${escapeHtml(word.id)}" title="Delete word" aria-label="Delete ${escapeHtml(word.sv)}">×</button></div>`).join("") : `<div class="empty-note">Your word bank is ready for its first word.</div>`;
+        return `${renderHeading("Samla ord", "Your word bank", "Keep the Swedish words you want to make your own.", addButton("Add a word"))}<section class="panel content-panel"><div class="panel-header"><div><h2 class="panel-title">Saved words</h2><div class="panel-subtitle">Pronunciation notes are yours to write and edit.</div></div><span class="count-label">${data.words.length} words</span></div><div class="toolbar"><label class="search-box"><span aria-hidden="true">⌕</span><input id="word-search" type="search" placeholder="Search Swedish or English" autocomplete="off" aria-label="Search words"></label><span class="count-label">A–Ö</span></div><div class="full-word-list" id="full-word-list">${rows}</div></section>`;
+      };
+      const renderCards = () => {
+        const phrase = data.phrases.length ? data.phrases[reviewIndex % data.phrases.length] : null;
+        const card = phrase ? `<div class="review-count">CARD ${reviewIndex + 1} OF ${data.phrases.length}</div><div class="flashcard ${reviewRevealed ? "revealed" : ""}"><div class="flashcard-kicker">${reviewRevealed ? "In Swedish" : "Translate into Swedish"}</div><div class="flashcard-word">${escapeHtml(reviewRevealed ? phrase.sv : phrase.en)}</div>${reviewRevealed ? `${phrase.pronunciation ? `<div class="flashcard-pronunciation">${escapeHtml(phrase.pronunciation)}</div>` : ""}<button class="text-button" style="margin-top:15px" type="button" data-speak="${escapeHtml(phrase.sv)}">◖)) &nbsp; Hear the phrase</button>` : ""}</div><div class="review-controls">${reviewRevealed ? `<button class="secondary-button" type="button" data-grade="again">↻ &nbsp; Practice again</button><button class="primary-button" type="button" data-grade="know">I knew it &nbsp; ✓</button>` : `<button class="secondary-button" type="button" data-card-step="-1">← &nbsp; Previous</button><button class="primary-button" type="button" data-reveal>Show Swedish</button><button class="secondary-button" type="button" data-card-step="1">Next &nbsp; →</button>`}</div>` : `<div class="empty-note">Add your first phrase to start a deck.</div>`;
+        const tiles = data.phrases.length ? data.phrases.map((item) => `<article class="phrase-tile"><div class="phrase-top"><div><div class="phrase-swedish">${escapeHtml(item.sv)}</div><div class="phrase-pronunciation">${escapeHtml(item.pronunciation || "")}</div></div><button class="speak-button" type="button" data-speak="${escapeHtml(item.sv)}" title="Listen" aria-label="Listen to ${escapeHtml(item.sv)}">◖))</button></div><div class="phrase-translation">${escapeHtml(item.en)}</div><div class="phrase-bottom"><span class="phrase-example">${escapeHtml(item.example || "")}</span><button class="delete-button" type="button" data-delete-phrase="${escapeHtml(item.id)}" title="Delete phrase" aria-label="Delete ${escapeHtml(item.sv)}">×</button></div></article>`).join("") : `<div class="empty-note">Your phrase deck is waiting for a first card.</div>`;
+        return `${renderHeading("Säg det högt", "Phrase cards", "Translate the meaning first, then reveal the Swedish.", addButton("Add a phrase", "phrase"))}<section class="panel content-panel" style="margin-bottom:16px"><div class="panel-header"><div><h2 class="panel-title">A little practice</h2><div class="panel-subtitle">A tiny deck, just for you</div></div><button class="text-button" type="button" data-shuffle>Shuffle ↻</button></div><div class="review-area">${card}</div></section><section class="panel content-panel"><div class="panel-header"><div><h2 class="panel-title">Your saved phrases</h2><div class="panel-subtitle">Useful things to have ready</div></div><span class="count-label">${data.phrases.length} cards</span></div><div class="cards-grid">${tiles}</div></section>`;
+      };
+      const renderExerciseNav = (active) => `<nav class="exercise-nav" aria-label="Practice categories"><button class="exercise-link ${active === "words" ? "active" : ""}" data-go="words">Vocabulary</button><button class="exercise-link ${active === "cards" ? "active" : ""}" data-go="cards">Everyday phrases</button><button class="exercise-link ${active === "listening" ? "active" : ""}" data-go="listening">Listening</button><button class="exercise-link ${active === "theory" ? "active" : ""}" data-go="theory">Theory</button><button class="exercise-link ${active === "media" ? "active" : ""}" data-go="media">Media phrases</button></nav>`;
+      const renderListening = () => {
+        const item = data.listening[listeningIndex % Math.max(1, data.listening.length)];
+        if (!item) return `${renderHeading("Lyssna", "Listening", "Build an ear for everyday Swedish.")}<section class="panel"><div class="empty-note">Listening practice is not available yet.</div></section>`;
+        return `${renderHeading("Lyssna", "Listening", "Listen to a short Swedish line, then choose its meaning.")}<section class="panel content-panel"><div class="panel-header"><div><h2 class="panel-title">Listening check ${listeningIndex + 1} of ${data.listening.length}</h2><div class="panel-subtitle">Replay as often as you need.</div></div><button class="text-button" type="button" data-listening-next>Next →</button></div><div class="listening-box"><div class="listening-prompt"><p>Listen first. The Swedish stays hidden until you answer.</p><button class="primary-button" type="button" data-listening-play data-text="${escapeHtml(item.sv)}">◖)) &nbsp; Play Swedish</button></div><div class="listening-options">${item.options.map((option, index) => `<button class="listening-option ${listeningAnswer !== null && option === item.en ? "correct" : listeningAnswer === index ? "incorrect" : ""}" type="button" data-listening-choice="${index}" ${listeningAnswer !== null ? "disabled" : ""}>${escapeHtml(option)}</button>`).join("")}</div>${listeningAnswer !== null ? `<div class="lesson-example" role="status"><strong>${escapeHtml(item.sv)}</strong><br>${listeningAnswer === item.options.indexOf(item.en) ? "Correct!" : `The answer is: ${escapeHtml(item.en)}`} · ${escapeHtml(item.pronunciation)}</div>` : ""}</div></section>`;
+      };
+      const renderTheory = () => `${renderHeading("Språkets byggstenar", "Theory", "Small grammar patterns, with examples you can use right away.")}<section class="panel content-panel"><div class="panel-header"><div><h2 class="panel-title">Grammar notes</h2><div class="panel-subtitle">Choose an answer to check each pattern.</div></div></div><div class="lesson-list">${data.theory.map((lesson) => `<article class="lesson-card"><div class="lesson-kicker">${escapeHtml(lesson.topic)}</div><h3 class="lesson-title">${escapeHtml(lesson.title)}</h3><p class="lesson-copy">${escapeHtml(lesson.copy)}</p><div class="lesson-example"><strong>${escapeHtml(lesson.example)}</strong></div><div class="lesson-quiz"><span class="lesson-copy">${escapeHtml(lesson.question)}</span><select aria-label="Answer: ${escapeHtml(lesson.question)}" data-theory-answer="${escapeHtml(lesson.id)}"><option value="">Choose…</option>${lesson.options.map((option) => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join("")}</select><button class="secondary-button" type="button" data-check-theory="${escapeHtml(lesson.id)}">Check</button></div><div class="lesson-copy" id="theory-result-${escapeHtml(lesson.id)}" role="status"></div></article>`).join("")}</div></section><section class="panel content-panel" style="margin-top:16px"><div class="panel-header"><div><h2 class="panel-title">Swedish reference shelf</h2><div class="panel-subtitle">Grammar, verbs, dictionary, and vocabulary resources from the linked collection.</div></div></div><div class="resource-grid"><a class="resource-link" href="https://sv.wikipedia.org/wiki/Svensk_grammatik" target="_blank" rel="noreferrer"><strong>Swedish grammar</strong><span>Grammar overview · Swedish Wikipedia</span></a><a class="resource-link" href="https://www.verbix.com/languages/swedish.html" target="_blank" rel="noreferrer"><strong>Verbix</strong><span>Look up Swedish verb forms</span></a><a class="resource-link" href="https://svenska.se/" target="_blank" rel="noreferrer"><strong>Svenska.se</strong><span>Swedish dictionary and language resources</span></a><a class="resource-link" href="https://en.wiktionary.org/wiki/Appendix:Swedish_Swadesh_list" target="_blank" rel="noreferrer"><strong>Swedish Swadesh list</strong><span>Core vocabulary list on Wiktionary</span></a></div></section>`;
+      const renderMedia = () => {
+        const tiles = data.mediaPhrases.length ? data.mediaPhrases.map((item) => `<article class="phrase-tile"><div class="phrase-top"><div><div class="media-meta">${escapeHtml(item.source || "Media phrase")}</div><div class="phrase-swedish" style="margin-top:8px">${escapeHtml(item.sv)}</div></div><button class="speak-button" type="button" data-speak="${escapeHtml(item.sv)}" title="Listen" aria-label="Listen to ${escapeHtml(item.sv)}">◖))</button></div><div class="phrase-translation">${escapeHtml(item.en)}</div><div class="phrase-bottom"><span class="phrase-example">${escapeHtml(item.note || "")}</span><button class="delete-button" type="button" data-delete-media="${escapeHtml(item.id)}" title="Delete phrase" aria-label="Delete ${escapeHtml(item.sv)}">×</button></div></article>`).join("") : `<div class="empty-note">Save a short phrase from a song, show, or creator you follow.</div>`;
+        return `${renderHeading("Från media", "Phrases from media", "Explore the Swedish you hear in music, TV, and online.", addButton("Add a media phrase", "media"))}<section class="panel content-panel"><div class="panel-header"><div><h2 class="panel-title">Your media phrase library</h2><div class="panel-subtitle">Starter lines are original practice examples. Add a short line and source you want to study.</div></div><span class="count-label">${data.mediaPhrases.length} phrases</span></div><div class="cards-grid">${tiles}</div></section>`;
+      };
+      const renderProgress = () => {
+        const log = logFor();
+        const minutesThisMonth = Object.entries(data.logs).filter(([key]) => key.startsWith(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`)).reduce((sum, [, entry]) => sum + (entry.minutes || 0), 0);
+        const streak = getStreak();
+        return `${renderHeading("Din utveckling", "A little adds up.", "Your practice, saved day by day. Your activity stays on this device.")}<div class="stats-grid"><div class="stat-card"><div class="stat-label">Minutes today</div><div class="stat-value">${log.minutes || 0}</div><div class="stat-foot">of ${data.goal} minute daily goal</div></div><div class="stat-card"><div class="stat-label">Cards reviewed today</div><div class="stat-value">${log.reviews || 0}</div><div class="stat-foot">${log.learned || 0} marked as known</div></div><div class="stat-card"><div class="stat-label">Current streak</div><div class="stat-value">${streak}</div><div class="stat-foot">${streak === 1 ? "day in a row" : "days in a row"}</div></div></div><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,.62fr);gap:15px;align-items:start"><div>${calendarMarkup(true)}</div><section class="panel"><div class="panel-header"><div><h2 class="panel-title">Your month</h2><div class="panel-subtitle">Quiet consistency wins.</div></div></div><div style="padding:0 19px 19px"><div class="word-row" style="border-top:0"><div class="word-badge" style="background:#e7eddb">↗</div><div class="word-info"><div class="word-swedish">${minutesThisMonth} minutes</div><div class="word-translation">of Swedish this month</div></div></div><div class="word-row"><div class="word-badge" style="background:#f4e9de">＋</div><div class="word-info"><div class="word-swedish">${data.words.length} words</div><div class="word-translation">in your personal word bank</div></div></div><div class="word-row"><div class="word-badge" style="background:#e5eff0">▱</div><div class="word-info"><div class="word-swedish">${data.phrases.length} phrases</div><div class="word-translation">ready to practice</div></div></div><button class="secondary-button" style="width:100%;margin-top:12px" type="button" data-session>${sessionStartedAt ? "Finish study session" : "Log a study session"}</button></div></section></div>`;
+      };
+      const render = () => {
+        const views = { overview: renderDashboard, words: renderWords, cards: renderCards, listening: renderListening, theory: renderTheory, media: renderMedia, progress: renderProgress };
+        const labels = { overview: "Overview", words: "Vocabulary", cards: "Everyday phrases", listening: "Listening", theory: "Theory", media: "Media phrases", progress: "Progress" };
+        const root = document.getElementById("view-root");
+        root.innerHTML = views[currentView]();
+        if (["overview", "words", "cards", "listening", "theory", "media"].includes(currentView)) root.insertAdjacentHTML("afterbegin", renderExerciseNav(currentView));
+        document.getElementById("crumb-current").textContent = labels[currentView];
+        document.querySelectorAll("[data-view]").forEach((item) => item.classList.toggle("active", item.dataset.view === currentView));
+        const streak = getStreak();
+        document.getElementById("streak-value").textContent = `${streak} ${streak === 1 ? "day" : "days"}`;
+        document.getElementById("streak-note").textContent = streak ? "Look at you, showing up." : "A little Swedish adds up.";
+      };
+      const closeModal = () => { document.getElementById("modal-root").innerHTML = ""; };
+      const openForm = (kind) => {
+        const phrase = kind === "phrase";
+        const media = kind === "media";
+        const modal = document.getElementById("modal-root");
+        modal.innerHTML = `<div class="overlay" data-overlay><form class="dialog" id="entry-form" data-kind="${kind}"><div class="dialog-header"><div><h2 class="dialog-title">${media ? "Add a media phrase" : phrase ? "Add an everyday phrase" : "Add a Swedish word"}</h2><div class="dialog-sub">${media ? "Keep a short line and where you found it." : "Keep the little details that help it stick."}</div></div><button class="icon-button" type="button" data-close-modal aria-label="Close">×</button></div><div class="field"><label for="entry-sv">${phrase || media ? "Phrase in Swedish" : "Word in Swedish"}</label><input id="entry-sv" name="sv" required maxlength="120" autocomplete="off" placeholder="${phrase || media ? "Jag skulle vilja ha..." : "fönster"}"></div><div class="field"><label for="entry-en">Meaning in English</label><input id="entry-en" name="en" required maxlength="160" autocomplete="off" placeholder="A meaning you will remember"></div>${media ? `<div class="field"><label for="entry-source">Where is it from?</label><select id="entry-source" name="source" required><option value="">Choose a source type</option><option>Song</option><option>TV / film</option><option>Online video</option><option>Podcast</option><option>Other</option></select></div>` : `<div class="field"><label for="entry-pronunciation">Pronunciation note <span style="font-weight:400">· optional</span></label><input id="entry-pronunciation" name="pronunciation" maxlength="120" autocomplete="off" placeholder="Your own phonetic spelling"><div class="field-hint">For example: hej → “hey”</div></div>`}<div class="field"><label for="entry-example">${media ? "Context or note" : phrase ? "When to use it" : "Example sentence"} <span style="font-weight:400">· optional</span></label><textarea id="entry-example" name="example" maxlength="240" placeholder="${media ? "Add a short context or language note" : "Add a small memory hook"}"></textarea></div><div class="dialog-actions"><button class="secondary-button" type="button" data-close-modal>Cancel</button><button class="primary-button" type="submit">Save ${media || phrase ? "phrase" : "word"}</button></div></form></div>`;
+        document.getElementById("entry-sv").focus();
+      };
+      const updateCalendar = (delta) => { calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + delta, 1); render(); };
+      const initialize = async () => {
+        try {
+          const response = await fetch("/api/state");
+          if (!response.ok) throw new Error("Local database is unavailable.");
+          const saved = await response.json();
+          serverAvailable = true;
+          if (saved) data = { ...seed, ...saved, logs: saved.logs || {} };
+          if (!saved) {
+            const imported = await fetch("/api/state", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+            if (!imported.ok) throw new Error("Could not initialize the local database.");
+          }
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch { /* SQLite remains the primary store. */ }
+          document.getElementById("storage-status").textContent = "SQLite";
+        } catch {
+          serverAvailable = false;
+          document.getElementById("storage-status").textContent = "Browser storage";
+        }
+        render();
+      };
+
+      document.getElementById("today-date").textContent = formatHeadingDate(today);
+      document.addEventListener("click", (event) => {
+        const target = event.target.closest("button, [data-overlay]");
+        if (!target) return;
+        if (target.dataset.view) { currentView = target.dataset.view; render(); return; }
+        if (target.dataset.go) { currentView = target.dataset.go; render(); return; }
+        if (target.dataset.add) { openForm(target.dataset.add); return; }
+        if (target.id === "add-from-top") { openForm("word"); return; }
+        if (target.id === "export-data") {
+          const link = document.createElement("a");
+          const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+          link.href = url;
+          link.download = `hej-swedish-${dateKey(today)}.json`;
+          link.click();
+          URL.revokeObjectURL(url);
+          return;
+        }
+        if (target.id === "import-data") { document.getElementById("data-import").click(); return; }
+        if (target.hasAttribute("data-close-modal") || target.hasAttribute("data-overlay") && event.target === target) { closeModal(); return; }
+        if (target.dataset.speak) { speak(target.dataset.speak); return; }
+        if (target.hasAttribute("data-listening-play")) { speak(target.dataset.text); return; }
+        if (target.dataset.listeningChoice !== undefined) {
+          listeningAnswer = Number(target.dataset.listeningChoice);
+          const item = data.listening[listeningIndex];
+          updateLog({ reviews: 1, minutes: 1, ...(item.options[listeningAnswer] === item.en ? { learned: 1 } : {}) });
+          render();
+          return;
+        }
+        if (target.hasAttribute("data-listening-next")) { listeningIndex = (listeningIndex + 1) % Math.max(1, data.listening.length); listeningAnswer = null; render(); return; }
+        if (target.dataset.checkTheory) {
+          const lesson = data.theory.find((item) => item.id === target.dataset.checkTheory);
+          const answer = document.querySelector(`[data-theory-answer="${target.dataset.checkTheory}"]`)?.value;
+          const result = document.getElementById(`theory-result-${target.dataset.checkTheory}`);
+          if (result) result.textContent = answer ? (answer === lesson?.answer ? "Correct. Snyggt!" : `Not quite. The answer is “${lesson?.answer}”.`) : "Choose an answer first.";
+          if (answer) updateLog({ reviews: 1, minutes: 1, ...(answer === lesson?.answer ? { learned: 1 } : {}) });
+          return;
+        }
+        if (target.dataset.month) { updateCalendar(Number(target.dataset.month)); return; }
+        if (target.dataset.day) { selectedDay = target.dataset.day; render(); return; }
+        if (target.hasAttribute("data-session")) {
+          if (!sessionStartedAt) { sessionStartedAt = Date.now(); render(); showToast("Study session started. Take your time."); }
+          else { const minutes = Math.max(1, Math.round((Date.now() - sessionStartedAt) / 60000)); sessionStartedAt = null; updateLog({ minutes }); render(); showToast(`${minutes} ${minutes === 1 ? "minute" : "minutes"} added to your progress.`); }
+          return;
+        }
+        if (target.hasAttribute("data-reveal")) { reviewRevealed = true; render(); return; }
+        if (target.dataset.cardStep) { reviewIndex = (reviewIndex + Number(target.dataset.cardStep) + data.phrases.length) % data.phrases.length; reviewRevealed = false; render(); return; }
+        if (target.dataset.grade) {
+          updateLog({ reviews: 1, minutes: 2, ...(target.dataset.grade === "know" ? { learned: 1 } : {}) });
+          reviewIndex = (reviewIndex + 1) % data.phrases.length;
+          reviewRevealed = false;
+          render();
+          showToast(target.dataset.grade === "know" ? "Bra jobbat! Card logged as known." : "No rush. You will see that card again.");
+          return;
+        }
+        if (target.hasAttribute("data-shuffle")) { reviewIndex = Math.floor(Math.random() * Math.max(1, data.phrases.length)); reviewRevealed = false; render(); return; }
+        if (target.dataset.deleteWord) { data.words = data.words.filter((item) => item.id !== target.dataset.deleteWord); persist(); render(); showToast("Word removed from your bank."); return; }
+        if (target.dataset.deletePhrase) { data.phrases = data.phrases.filter((item) => item.id !== target.dataset.deletePhrase); reviewIndex = 0; persist(); render(); showToast("Phrase removed from your deck."); return; }
+        if (target.dataset.deleteMedia) { data.mediaPhrases = data.mediaPhrases.filter((item) => item.id !== target.dataset.deleteMedia); persist(); render(); showToast("Media phrase removed."); }
+      });
+      document.addEventListener("submit", (event) => {
+        if (event.target.id !== "entry-form") return;
+        event.preventDefault();
+        const values = Object.fromEntries(new FormData(event.target));
+        const kind = event.target.dataset.kind;
+        const isPhrase = kind === "phrase";
+        const isMedia = kind === "media";
+        const entry = { id: `${isMedia ? "m" : isPhrase ? "p" : "w"}-${Date.now()}`, sv: values.sv.trim(), en: values.en.trim(), pronunciation: (values.pronunciation || "").trim(), example: (values.example || "").trim() };
+        if (!entry.sv || !entry.en) return;
+        if (isMedia) { data.mediaPhrases.unshift({ ...entry, source: `${values.source} · your collection`, note: entry.example }); updateLog({ cardsAdded: 1, minutes: 1 }); currentView = "media"; }
+        else if (isPhrase) { data.phrases.unshift(entry); updateLog({ cardsAdded: 1, minutes: 1 }); reviewIndex = 0; currentView = "cards"; }
+        else { data.words.unshift(entry); updateLog({ wordsAdded: 1, minutes: 1 }); currentView = "words"; }
+        persist(); closeModal(); render(); showToast(isMedia ? "Media phrase saved." : isPhrase ? "Phrase saved to your deck." : "Word saved to your bank.");
+      });
+      document.addEventListener("input", (event) => {
+        if (event.target.id !== "word-search") return;
+        const query = event.target.value.trim().toLocaleLowerCase();
+        document.querySelectorAll(".full-word-row").forEach((row, index) => {
+          const word = data.words[index];
+          row.hidden = !!query && !`${word.sv} ${word.en} ${word.pronunciation} ${word.example}`.toLocaleLowerCase().includes(query);
+        });
+      });
+      document.getElementById("data-import").addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        try {
+          const imported = JSON.parse(await file.text());
+          if (!Number.isInteger(imported.goal) || !Array.isArray(imported.words) || !Array.isArray(imported.phrases) || !imported.logs || typeof imported.logs !== "object") throw new Error("This file is not a hej! backup.");
+          data = { ...seed, ...imported, logs: imported.logs || {} };
+          if (!Array.isArray(data.mediaPhrases)) data.mediaPhrases = [];
+          reviewIndex = 0;
+          listeningIndex = 0;
+          listeningAnswer = null;
+          await persist();
+          render();
+          showToast("Backup imported.");
+        } catch (error) {
+          showToast(error.message || "Could not import this backup.");
+        }
+        event.target.value = "";
+      });
+      document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeModal(); });
+      initialize();
+    })();
+  </script>
+</body>
+</html>
